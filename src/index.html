@@ -16,6 +16,7 @@
             document.documentElement.className = Telegram.WebApp.colorScheme;
         }
 
+        Telegram.WebApp.expand();
         Telegram.WebApp.onEvent('themeChanged', setThemeClass);
         setThemeClass();
     </script>
@@ -68,6 +69,7 @@
         }
 
         #soon-button {
+            pointer-events: none;
             margin-top: 2vw;
             padding: 1vw 3vw;
             background-color: #bebebe;
@@ -107,33 +109,40 @@
 </head>
 <body>
     <section id="top_sect" class="second">
-        <table class="game-table">
-            <tr>
-                <td><img src="data/img1.png"></td>
-                <td>
-                    <b><a id="game-name">Space Runner<a/></b><br>
-                    <a id="game-desc">Улети с космической станции, убивая врагов!</a>
-                </td>
-                <td><a id="play-button" href="https://egor-ignakhin.github.io/SpaceRunnerWebPage/">Играть</a></td>
-            </tr>
-            <tr>
-                <td><img src="data/img2.png"></td>
-                <td>
-                    <b><a id="game-name">Дровосек Рубидер<a/></b><br>
-                    <a id="game-desc">Руби деревья!</a>
-                </td>
-                <td><a id="soon-button">Скоро</a></td>
-            </tr>
-            <tr>
-                <td><img src="data/img3.png"></td>
-                <td>
-                    <b><a id="game-name">Диванная пирамида<a/></b><br>
-                    <a id="game-desc">Построй башню из диванов!</a>
-                </td>
-                <td><a id="soon-button">Скоро</a></td>
-            </tr>
+        <table class="game-table" id="game-table">
         </table>
     </section>
     <a href="#order" id="order-button">Заказать игру</a>
+
+    <script>
+        function createGameHTML(gameName, gameDesc, playLink, imagePath, buttonType, gameStatus) {
+            return `
+                <tr>
+                    <td><img src="${imagePath}"></td>
+                    <td>
+                        <b><a id="game-name">${gameName}</a></b><br>
+                        <a id="game-desc">${gameDesc}</a>
+                    </td>
+                    <td><a id="${buttonType}" href="${playLink}">${gameStatus}</a></td>
+                </tr>
+            `;
+        }
+
+        function loadGames() {
+            const gamesTable = document.getElementById('game-table');
+            
+            fetch('http://127.0.0.1:5500/src/games.json')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(game => {
+                        const gameHTML = createGameHTML(game.name, game.desc, game.playLink, game.imagePath, game.buttonType, game.gameStatus);
+                        gamesTable.innerHTML += gameHTML;
+                    });
+                })
+                .catch(error => console.error('Error loading games:', error));
+        }
+
+        window.onload = loadGames;
+    </script>
 </body>
 </html>

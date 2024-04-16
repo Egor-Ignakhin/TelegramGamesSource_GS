@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Space Runner",
+        "desc": "Улети с космической станции, убивая врагов!",
+        "playLink": "https://egor-ignakhin.github.io/SpaceRunnerWebPage/",
+        "imagePath": "http://127.0.0.1:5500/src/data/img1.png",
+        "buttonType": "play-button",
+        "gameStatus": "Играть"
+    },
+    {
+        "name": "Дровосек Рубидер",
+        "desc": "Руби деревья!",
+        "playLink": "",
+        "imagePath": "http://127.0.0.1:5500/src/data/img2.png",
+        "buttonType": "soon-button",
+        "gameStatus": "Скоро"
+    },
+    {
+        "name": "Диванная пирамида",
+        "desc": "Построй башню из диванов!",
+        "playLink": "",
+        "imagePath": "http://127.0.0.1:5500/src/data/img3.png",
+        "buttonType": "soon-button",
+        "gameStatus": "Скоро"
+    }
+]
