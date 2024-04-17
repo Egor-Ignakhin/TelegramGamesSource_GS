@@ -21,46 +21,53 @@
         setThemeClass();
     </script>
     <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
         .game-table {
-            margin-top: 10vw;
+            margin-top: 3vw;
             width: 100%;
             border-collapse: collapse;
         }
 
         .game-table td {
-            padding: 1vw;
+            padding: 2vw;
             vertical-align: middle;
         }
 
         .game-table img {
-            max-width: 20vw;
+            max-width: 18vw;
             min-width: 100%;
+            border-radius: 3vw;
             vertical-align: middle;
             height: auto;
         }
 
         #game-name {
-            color: #000000;
+            color: #222222;
             font-family: Arial, sans-serif;
-            font-size: 4vw;
+            font-size: 4.3vw;
             font-weight: bold;
         }
 
         #game-desc {
-            color: #b6b6b6;
+            color: #9e9b9b;
             font-family: Arial, sans-serif;
-            font-size: 3vw;
+            font-size: 3.5vw;
+            margin-top: 1.5vw;
+            display: block;
         }
 
         #play-button {
             margin-top: 2vw;
             padding: 1vw 3vw;
-            background-color: #d6d6d6;
-            color: #2a6eff;
+            background-color: #dddddd;
+            color: #2d93cf;
             border-radius: 3vw;
             text-decoration: none;
             font-family: Arial, sans-serif;
-            font-size: 3.5vw;
+            font-size: 4vw;
             text-transform: uppercase;
             font-weight: bold;
             display: inline-block;
@@ -71,13 +78,13 @@
         #soon-button {
             pointer-events: none;
             margin-top: 2vw;
-            padding: 1vw 3vw;
+            padding: 1vw 4vw;
             background-color: #bebebe;
-            color: #2a6eff;
+            color: #2d93cf;
             border-radius: 3vw;
             text-decoration: none;
             font-family: Arial, sans-serif;
-            font-size: 3.5vw;
+            font-size: 4vw;
             text-transform: uppercase;
             font-weight: bold;
             display: inline-block;
@@ -94,7 +101,7 @@
             border-radius: 5vw;
             text-decoration: none;
             font-family: Arial, sans-serif;
-            font-size: 4vw;
+            font-size: 4.2vw;
             text-transform: uppercase;
             font-weight: bold;
             position: fixed;
@@ -131,7 +138,7 @@
         function loadGames() {
             const gamesTable = document.getElementById('game-table');
             
-            fetch('http://127.0.0.1:5500/src/games.json')
+            fetch('games.json')
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(game => {
