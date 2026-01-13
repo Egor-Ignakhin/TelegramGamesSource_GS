@@ -42,14 +42,17 @@ function createGameCard(game, index) {
             </svg>
         </div>
         <h2 class="game-title">${game.name}</h2>
-        <button class="play-btn" onclick="openGame('${game.id}')">Играть</button>
+        <button class="play-btn" onclick="openGameModal('${game.id}')">Подробнее</button>
     `;
     
     return card;
 }
 
-// Открытие игры
-function openGame(gameId) {
+// Текущая выбранная игра
+let currentGame = null;
+
+// Открытие модального окна с информацией об игре
+function openGameModal(gameId) {
     const game = PROMO_CONFIG.games.find(g => g.id === gameId);
     
     if (!game) {
@@ -57,16 +60,116 @@ function openGame(gameId) {
         return;
     }
     
-    console.log(`Opening game: ${game.name}`);
+    currentGame = game;
     
-    // Открываем игру по ссылке из конфига
-    if (game.url) {
-        window.location.href = game.url;
-        // Или открыть в новой вкладке:
-        // window.open(game.url, '_blank');
+    // Заполняем модальное окно данными игры
+    const modal = document.getElementById('gameModal');
+    const iconWrapper = document.getElementById('modalIconWrapper');
+    const iconEl = document.getElementById('modalIcon');
+    const titleEl = document.getElementById('modalTitle');
+    const descEl = document.getElementById('modalDescription');
+    const tagsEl = document.getElementById('modalTags');
+    
+    // Устанавливаем цвет и иконку
+    iconWrapper.style.background = game.color;
+    iconEl.innerHTML = GAME_ICONS[game.icon] || GAME_ICONS.blocks;
+    
+    // Устанавливаем название и описание
+    titleEl.textContent = game.name;
+    descEl.textContent = game.description || 'Идеально для ритейла и промо-акций. Захватывающий геймплей для ваших клиентов!';
+    
+    // Устанавливаем теги
+    if (game.tags && game.tags.length > 0) {
+        tagsEl.innerHTML = game.tags.map(tag => `<span class="modal-tag">${tag}</span>`).join('');
     } else {
-        alert(`Ссылка для игры "${game.name}" не настроена в конфиге`);
+        tagsEl.innerHTML = `
+            <span class="modal-tag">🎮 Казуальная</span>
+            <span class="modal-tag">⏱️ 2-5 мин</span>
+        `;
     }
+    
+    // Показываем модальное окно
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Закрытие модального окна
+function closeModal() {
+    const modal = document.getElementById('gameModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    currentGame = null;
+}
+
+// Переход к игре
+function playGame() {
+    if (!currentGame) return;
+    
+    console.log(`Playing game: ${currentGame.name}`);
+    
+    // Сохраняем URL до закрытия модалки (closeModal обнуляет currentGame)
+    const gameUrl = currentGame.url;
+    const gameName = currentGame.name;
+    
+    if (gameUrl) {
+        closeModal();
+        window.location.href = gameUrl;
+    } else {
+        alert(`Ссылка для игры "${gameName}" не настроена`);
+    }
+}
+
+// Заявка на игру
+function requestGame() {
+    if (!currentGame) return;
+    
+    console.log(`Request game: ${currentGame.name}`);
+    
+    // Сохраняем данные до закрытия модалки
+    const gameId = currentGame.id;
+    const gameName = currentGame.name;
+    
+    // Telegram WebApp API для отправки сообщения
+    if (window.Telegram && window.Telegram.WebApp) {
+        // Отправляем данные в бот
+        window.Telegram.WebApp.sendData(JSON.stringify({
+            type: 'game_request',
+            gameId: gameId,
+            gameName: gameName
+        }));
+        
+        // Показываем уведомление
+        window.Telegram.WebApp.showAlert('✅ Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+        closeModal();
+    } else {
+        // Fallback для тестирования вне Telegram
+        const contactLink = PROMO_CONFIG.contactLink || 'https://t.me/your_username';
+        const message = encodeURIComponent(`🎮 Хочу игру "${gameName}" для своего бизнеса!`);
+        closeModal();
+        window.open(`${contactLink}?text=${message}`, '_blank');
+    }
+}
+
+// Закрытие модалки по клику на оверлей
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('gameModal');
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Закрытие по Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+});
+
+// Legacy функция для обратной совместимости
+function openGame(gameId) {
+    openGameModal(gameId);
 }
 
 // Добавление ripple эффекта к кнопкам
