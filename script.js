@@ -76,11 +76,14 @@ function createGameCard(game, index) {
     
     const iconSVG = GAME_ICONS[game.icon] || GAME_ICONS.blocks;
     
+    // Используем изображение, если оно есть, иначе SVG иконку
+    const iconContent = game.image 
+        ? `<img src="${game.image}" alt="${game.name}" class="game-image" />`
+        : `<svg class="game-icon" viewBox="0 0 24 24" fill="currentColor">${iconSVG}</svg>`;
+    
     card.innerHTML = `
-        <div class="game-icon-wrapper">
-            <svg class="game-icon" viewBox="0 0 24 24" fill="currentColor">
-                ${iconSVG}
-            </svg>
+        <div class="game-icon-wrapper ${game.image ? 'has-image' : ''}">
+            ${iconContent}
         </div>
         <h2 class="game-title">${game.name}</h2>
         <button class="play-btn" onclick="openGameModal('${game.id}')">Подробнее</button>
@@ -111,9 +114,18 @@ function openGameModal(gameId) {
     const descEl = document.getElementById('modalDescription');
     const tagsEl = document.getElementById('modalTags');
     
-    // Устанавливаем цвет и иконку
+    // Устанавливаем цвет и иконку/изображение
     iconWrapper.style.background = game.color;
-    iconEl.innerHTML = GAME_ICONS[game.icon] || GAME_ICONS.blocks;
+    
+    // Используем изображение, если оно есть, иначе SVG иконку
+    if (game.image) {
+        iconWrapper.classList.add('has-image');
+        iconEl.innerHTML = `<img src="${game.image}" alt="${game.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" />`;
+    } else {
+        iconWrapper.classList.remove('has-image');
+        const iconSVG = GAME_ICONS[game.icon] || GAME_ICONS.blocks;
+        iconEl.innerHTML = `<svg class="modal-icon" viewBox="0 0 24 24" fill="currentColor">${iconSVG}</svg>`;
+    }
     
     // Устанавливаем название и описание
     titleEl.textContent = game.name;

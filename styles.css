@@ -127,6 +127,25 @@ body {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
+/* Стили для изображений игр */
+.game-icon-wrapper.has-image {
+    padding: 0;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+}
+
+.game-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.game-card:hover .game-image {
+    transform: scale(1.05);
+}
+
 .game-title {
     color: var(--text-dark);
     font-size: 15px;
@@ -347,10 +366,32 @@ body {
 }
 
 .modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-icon svg {
     width: 44px;
     height: 44px;
     color: white;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+/* Стили для модального окна с изображением */
+.modal-icon-wrapper.has-image {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.modal-icon-wrapper.has-image img {
+    border-radius: 16px;
 }
 
 .modal-title {
