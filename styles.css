@@ -4,6 +4,13 @@
     box-sizing: border-box;
 }
 
+/* Отключаем зум на мобильных устройствах */
+html {
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
 :root {
     --bg-gradient-start: #4A9FD4;
     --bg-gradient-end: #2E7AB8;
@@ -104,11 +111,18 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
     animation: fadeInUp 0.6s ease-out calc(var(--card-delay)) both;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    touch-action: manipulation;
 }
 
 .game-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.game-card:active {
+    transform: scale(0.98);
 }
 
 
@@ -148,26 +162,35 @@ body {
 
 .game-title {
     color: var(--text-dark);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     text-align: center;
-    padding: 14px 12px 10px;
+    padding: 12px 8px 8px;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
 .play-btn {
     display: block;
-    width: calc(100% - 20px);
-    margin: 0 10px 14px;
-    padding: 11px 18px;
+    width: calc(100% - 16px);
+    margin: 0 8px 12px;
+    padding: 10px 14px;
     background: var(--btn-color);
     color: white;
     border: none;
     border-radius: 10px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
+    /* Критично для работы на мобильных устройствах */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .play-btn:hover {
@@ -176,7 +199,15 @@ body {
 }
 
 .play-btn:active {
-    transform: scale(0.98);
+    transform: scale(0.96);
+    background: #2567a0;
+}
+
+/* Для мобильных устройств */
+@media (hover: none) {
+    .play-btn:hover {
+        transform: none;
+    }
 }
 
 /* Footer */
