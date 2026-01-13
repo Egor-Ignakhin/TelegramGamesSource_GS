@@ -1,8 +1,49 @@
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
+    initializeTelegramWebApp();
     initializePage();
     generateGameCards();
 });
+
+// Инициализация Telegram WebApp
+function initializeTelegramWebApp() {
+    // Проверяем доступность Telegram WebApp API
+    if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        
+        // Разворачиваем WebApp на весь экран
+        tg.expand();
+        
+        // Настраиваем цвета под наше приложение
+        tg.setHeaderColor('#4A9FD4');
+        tg.setBackgroundColor('#4A9FD4');
+        
+        // Показываем кнопку "Назад"
+        tg.BackButton.show();
+        
+        // Обработчик клика на кнопку "Назад"
+        tg.BackButton.onClick(function() {
+            // Приоритет закрытия: Game Viewer → Modal → WebApp
+            const gameViewer = document.getElementById('gameViewer');
+            const modal = document.getElementById('gameModal');
+            
+            if (gameViewer && gameViewer.classList.contains('active')) {
+                // Закрываем игру
+                closeGameViewer();
+            } else if (modal && modal.classList.contains('active')) {
+                // Закрываем модалку
+                closeModal();
+            } else {
+                // Закрываем WebApp (возврат в чат)
+                tg.close();
+            }
+        });
+        
+        console.log('✅ Telegram WebApp initialized');
+    } else {
+        console.log('⚠️ Telegram WebApp API not available (running outside Telegram)');
+    }
+}
 
 // Инициализация заголовков из конфига
 function initializePage() {
@@ -101,22 +142,65 @@ function closeModal() {
     currentGame = null;
 }
 
-// Переход к игре
+// Переход к игре (открывает в iframe)
 function playGame() {
     if (!currentGame) return;
     
     console.log(`Playing game: ${currentGame.name}`);
     
-    // Сохраняем URL до закрытия модалки (closeModal обнуляет currentGame)
+    // Сохраняем URL и название до закрытия модалки
     const gameUrl = currentGame.url;
     const gameName = currentGame.name;
     
     if (gameUrl) {
         closeModal();
-        window.location.href = gameUrl;
+        openGameViewer(gameUrl, gameName);
     } else {
         alert(`Ссылка для игры "${gameName}" не настроена`);
     }
+}
+
+// Открытие игры в iframe
+function openGameViewer(url, title) {
+    const viewer = document.getElementById('gameViewer');
+    const frame = document.getElementById('gameFrame');
+    const titleEl = document.getElementById('gameViewerTitle');
+    
+    titleEl.textContent = title;
+    frame.src = url;
+    viewer.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    console.log(`Game viewer opened: ${title}`);
+}
+
+// Закрытие game viewer
+function closeGameViewer() {
+    const viewer = document.getElementById('gameViewer');
+    const frame = document.getElementById('gameFrame');
+    
+    viewer.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Полная очистка iframe для освобождения памяти
+    setTimeout(() => {
+        // Останавливаем все процессы в iframe
+        try {
+            frame.contentWindow.stop();
+        } catch(e) {}
+        
+        // Очищаем src
+        frame.src = 'about:blank';
+        
+        // Пересоздаем iframe для гарантированной очистки памяти
+        // (некоторые браузеры не освобождают память от старого контента)
+        setTimeout(() => {
+            frame.src = '';
+        }, 100);
+        
+    }, 300);
+    
+    console.log('Game viewer closed, memory cleaned');
 }
 
 // Заявка на игру
