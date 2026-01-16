@@ -165,11 +165,12 @@ body {
     font-size: 14px;
     font-weight: 700;
     text-align: center;
-    padding: 12px 8px 8px;
-    line-height: 1.2;
+    padding: 14px 8px 10px;
+    line-height: 1.4;
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
+    min-height: auto;
 }
 
 .play-btn {
@@ -283,13 +284,32 @@ body {
     }
     
     .game-title {
-        font-size: 14px;
-        padding: 12px 10px 8px;
+        font-size: 13px;
+        padding: 12px 6px 8px;
+        line-height: 1.4;
     }
     
     .play-btn {
-        font-size: 13px;
-        padding: 10px 16px;
+        font-size: 12px;
+        padding: 9px 12px;
+    }
+}
+
+@media (max-width: 340px) {
+    .game-title {
+        font-size: 12px;
+        padding: 10px 4px 6px;
+    }
+    
+    .play-btn {
+        font-size: 11px;
+        padding: 8px 10px;
+        margin: 0 6px 10px;
+        width: calc(100% - 12px);
+    }
+    
+    .game-icon-wrapper {
+        padding: 20px 14px;
     }
 }
 
