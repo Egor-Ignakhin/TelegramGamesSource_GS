@@ -47,9 +47,71 @@ function initializeTelegramWebApp() {
             }
         });
         
+        // Проверяем start_param для прямого запуска игры по QR-коду
+        handleStartParam(tg);
+        
         console.log('✅ Telegram WebApp initialized');
     } else {
         console.log('⚠️ Telegram WebApp API not available (running outside Telegram)');
+        
+        // Fallback: проверяем URL параметры для тестирования вне Telegram
+        handleURLParams();
+    }
+}
+
+// Обработка start_param из Telegram (для QR-кодов)
+// Формат: game_GAMEID (например: game_memory, game_tetris, game_match3)
+function handleStartParam(tg) {
+    const startParam = tg.initDataUnsafe?.start_param;
+    
+    if (!startParam) {
+        console.log('📋 No start_param, showing main menu');
+        return;
+    }
+    
+    console.log('🔗 Start param received:', startParam);
+    
+    // Проверяем формат: game_GAMEID
+    if (startParam.startsWith('game_')) {
+        const gameId = startParam.replace('game_', '');
+        openGameDirectly(gameId);
+    } else {
+        console.log('⚠️ Unknown start_param format:', startParam);
+    }
+}
+
+// Fallback: обработка URL параметров для тестирования вне Telegram
+function handleURLParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameParam = urlParams.get('game');
+    
+    if (gameParam) {
+        console.log('🔗 URL game param:', gameParam);
+        openGameDirectly(gameParam);
+    }
+}
+
+// Прямой запуск игры (минуя модалку) - для QR-кодов
+function openGameDirectly(gameId) {
+    const game = PROMO_CONFIG.games.find(g => g.id === gameId);
+    
+    if (!game) {
+        console.error(`❌ Game not found: ${gameId}`);
+        console.log('📋 Available games:', PROMO_CONFIG.games.map(g => g.id).join(', '));
+        return;
+    }
+    
+    console.log(`🎮 Direct launch: ${game.name}`);
+    
+    if (game.url) {
+        // Небольшая задержка чтобы DOM успел отрисоваться
+        setTimeout(() => {
+            openGameViewer(game.url, game.name);
+        }, 100);
+    } else {
+        console.error(`❌ No URL configured for game: ${gameId}`);
+        // Показываем модалку если URL не настроен
+        openGameModal(gameId);
     }
 }
 
